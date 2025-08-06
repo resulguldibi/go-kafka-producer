@@ -3,20 +3,17 @@ FROM golang:1.22-alpine3.20 AS builder
 
 WORKDIR /app
 
-# Update and install git for go modules
-RUN apk update && apk add --no-cache git
-
-# Copy go mod files
+# Copy go mod files first (for better layer caching)
 COPY go.mod go.sum ./
 
-# Download dependencies
-RUN go mod download
+# Copy vendor directory with all dependencies
+COPY vendor/ ./vendor/
 
 # Copy source code
-COPY . .
+COPY *.go ./
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# Build the application using vendor (no download needed)
+RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -a -installsuffix cgo -o main .
 
 # Final stage
 FROM alpine:3.20

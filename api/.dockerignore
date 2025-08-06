@@ -1,0 +1,20 @@
+# Ignore unnecessary files during Docker build
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+
+# Ignore test files
+*_test.go
+test.sh
+
+# Ignore build artifacts
+*.exe
+*.out
+main
+
+# Since we're using vendor, ignore these
+# We only need vendor/ directory
+.mod
+.sum
